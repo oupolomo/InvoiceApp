@@ -1,5 +1,5 @@
 import { useState } from "react";
-
+import { apiFetch } from "./api";
 const API_URL = import.meta.env.VITE_API_URL;
 
 function DatabaseTab() {
@@ -7,7 +7,7 @@ function DatabaseTab() {
 
   const loadInvoices = async () => {
     try {
-      const response = await fetch(`${API_URL}/invoices`);
+      const response = await apiFetch(`${API_URL}/invoices`);
       const data = await response.json();
 
       console.log(data);
@@ -20,7 +20,7 @@ function DatabaseTab() {
 
   const deleteInvoices = async (id) => {
     try {
-      const response = await fetch(`${API_URL}/invoice/${id}`, {
+      const response = await apiFetch(`${API_URL}/invoice/${id}`, {
         method: "DELETE",
       });
 

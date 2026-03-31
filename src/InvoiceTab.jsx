@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-
+import { apiFetch } from "./api";
 const API_URL = import.meta.env.VITE_API_URL;
 
 function InvoiceTab() {
@@ -23,7 +23,7 @@ function InvoiceTab() {
 
   const loadInvoiceSettings = async () => {
     try {
-      const response = await fetch(`${API_URL}/invoicesettings`);
+      const response = await apiFetch(`${API_URL}/invoicesettings`);
       const data = await response.json();
 
       console.log("invoice settings:", data);
@@ -36,7 +36,7 @@ function InvoiceTab() {
 
   const loadCompanies = async () => {
     try {
-      const response = await fetch(`${API_URL}/clients`);
+      const response = await apiFetch(`${API_URL}/clients`);
 
       if (!response.ok) {
         throw new Error(`HTTP error ${response.status}`);
@@ -56,7 +56,7 @@ function InvoiceTab() {
 
   const loadServices = async () => {
     try {
-      const response = await fetch(`${API_URL}/services`);
+      const response = await apiFetch(`${API_URL}/services`);
 
       if (!response.ok) {
         throw new Error(`HTTP error ${response.status}`);
@@ -88,7 +88,7 @@ function InvoiceTab() {
         lines,
       };
 
-      const response = await fetch(`${API_URL}/invoice`, {
+      const response = await apiFetch(`${API_URL}/invoice`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -160,7 +160,7 @@ function InvoiceTab() {
       };
       console.log("5. updatedInvoiceSettings:", updatedInvoiceSettings);
 
-      const response = await fetch(`${API_URL}/invoicesettings`, {
+      const response = await apiFetch(`${API_URL}/invoicesettings`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",

@@ -3,7 +3,10 @@ from fastapi.middleware.cors import CORSMiddleware
 from app.routers import invoices, settings
 from app.db.database import init_db
 
-app = FastAPI()
+from fastapi import Depends
+from app.auth import require_password
+
+app = FastAPI(dependencies=[Depends(require_password)])
 
 origins = [
     "http://localhost:5173",

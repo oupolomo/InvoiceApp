@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { apiFetch } from "./api";
 
 const API_URL = import.meta.env.VITE_API_URL;
 
@@ -58,7 +59,7 @@ function SettingsTab() {
 
   const saveInvoiceSettingsData = async () => {
     try {
-      const response = await fetch(`${API_URL}/invoicesettings`, {
+      const response = await apiapiFetch(`${API_URL}/invoicesettings`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -81,7 +82,7 @@ function SettingsTab() {
 
   const loadInvoiceSettingsData = async () => {
     try {
-      const response = await fetch(`${API_URL}/invoicesettings`);
+      const response = await apiFetch(`${API_URL}/invoicesettings`);
       const data = await response.json();
 
       console.log(data);
@@ -94,7 +95,7 @@ function SettingsTab() {
 
   const loadCompanySettings = async () => {
     try {
-      const response = await fetch(`${API_URL}/companysettings`);
+      const response = await apiFetch(`${API_URL}/companysettings`);
       const data = await response.json();
 
       console.log(data);
@@ -107,7 +108,7 @@ function SettingsTab() {
 
   const saveCompanySettings = async () => {
     try {
-      const response = await fetch(`${API_URL}/companysettings`, {
+      const response = await apiFetch(`${API_URL}/companysettings`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -401,7 +402,7 @@ function ClientsTab() {
 
   const loadClients = async () => {
     try {
-      const response = await fetch(`${API_URL}/clients`);
+      const response = await apiFetch(`${API_URL}/clients`);
 
       console.log("clients response status:", response.status);
 
@@ -437,7 +438,7 @@ function ClientsTab() {
     };
 
     try {
-      const response = await fetch(`${API_URL}/clients`, {
+      const response = await apiFetch(`${API_URL}/clients`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -458,7 +459,7 @@ function ClientsTab() {
 
   const saveEditedClient = async () => {
     try {
-      const response = await fetch(`${API_URL}/clients/${editingClient.id}`, {
+      const response = await apiFetch(`${API_URL}/clients/${editingClient.id}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -480,7 +481,7 @@ function ClientsTab() {
 
   const deleteClient = async (id) => {
     try {
-      const response = await fetch(`${API_URL}/clients/${id}`, {
+      const response = await apiFetch(`${API_URL}/clients/${id}`, {
         method: "DELETE",
       });
 
@@ -699,13 +700,13 @@ function ServicesTab() {
   });
 
   const loadServices = async () => {
-    const response = await fetch(`${API_URL}/services`);
+    const response = await apiFetch(`${API_URL}/services`);
     const data = await response.json();
     setServices(data);
   };
 
   const addService = async () => {
-    const response = await fetch(`${API_URL}/services`, {
+    const response = await apiFetch(`${API_URL}/services`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -733,7 +734,7 @@ function ServicesTab() {
 
   const deleteService = async (id) => {
     try {
-      const response = await fetch(`${API_URL}/services/${id}`, {
+      const response = await apiFetch(`${API_URL}/services/${id}`, {
         method: "DELETE",
       });
 
