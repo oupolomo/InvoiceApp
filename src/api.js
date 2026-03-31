@@ -1,23 +1,17 @@
-export const API_URL = import.meta.env.VITE_API_URL;
-
-export function getAuthHeaders(extraHeaders = {}) {
+export async function apiFetch(path, options = {}) {
   const password = localStorage.getItem("appPassword") || "";
 
-  return {
-    ...extraHeaders,
-    "X-App-Password": password,
-  };
-}
-
-export async function apiFetch(path, options = {}) {
-  const finalOptions = {
+  const response = await fetch(`${import.meta.env.VITE_API_URL}${path}`, {
     ...options,
-    headers: getAuthHeaders(options.headers || {}),
-  };
-
-  const response = await fetch(`${API_URL}${path}`, finalOptions);
+    headers: {
+      ...(options.headers || {}),
+      "X-App-Password": password,
+    },
+  });
 
   if (response.status === 401) {
+    localStorage.removeItem("appPassword");
+    window.location.reload();
     throw new Error("Unauthorized");
   }
 
