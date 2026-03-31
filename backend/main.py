@@ -6,7 +6,8 @@ from app.db.database import init_db
 app = FastAPI()
 
 origins = [
-    "http://localhost:5173"
+    "http://localhost:5173",
+    "https://desirable-purpose-production-e9be.up.railway.app/", 
 ]
 
 app.add_middleware(
