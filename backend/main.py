@@ -5,15 +5,15 @@ from app.db.database import init_db
 
 app = FastAPI()
 
-#origins = [
-#    "http://localhost:5173",
-#    "https://desirable-purpose-production-e9be.up.railway.app", 
-#]
-origins = ["*"]
+origins = [
+    "http://localhost:5173",
+    "https://desirable-purpose-production-e9be.up.railway.app",
+]
+
 app.add_middleware(
     CORSMiddleware,
     allow_origins=origins,
-    allow_credentials=True,
+    allow_credentials=False,
     allow_methods=["*"],
     allow_headers=["*"],
 )
@@ -32,4 +32,3 @@ def root():
 @app.get("/ping")
 def ping():
     return {"message": "pong"}
-
