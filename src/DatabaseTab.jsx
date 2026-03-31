@@ -1,66 +1,61 @@
 import { useState } from "react";
 
-function DatabaseTab() {
+const API_URL = import.meta.env.VITE_API_URL;
 
+function DatabaseTab() {
   const [invoices, setInvoices] = useState([]);
 
   const loadInvoices = async () => {
-
     try {
-
-      const response = await fetch("http://127.0.0.1:8000/invoices");
-
+      const response = await fetch(`${API_URL}/invoices`);
       const data = await response.json();
 
       console.log(data);
-
       setInvoices(data);
-
     } catch (error) {
-
       console.error(error);
       alert("Failed to load invoices");
-
     }
-
   };
-  
-  const deleteInvoices = async (id) => {
-    try{
-    const response = await fetch(`http://127.0.0.1:8000/invoice/${id}`,{
-       method: "DELETE"
-    });
-    const data = await response.json();
-    console.log(data);
 
-    setInvoices(invoices.filter((invoice) => invoice.id !== id));
-  } catch (error) {
-    console.error(error);
-    alert("delete failed")
-  }
-  } 
+  const deleteInvoices = async (id) => {
+    try {
+      const response = await fetch(`${API_URL}/invoice/${id}`, {
+        method: "DELETE",
+      });
+
+      const data = await response.json();
+      console.log(data);
+
+      setInvoices(invoices.filter((invoice) => invoice.id !== id));
+    } catch (error) {
+      console.error(error);
+      alert("delete failed");
+    }
+  };
 
   const openInvoicePdf = (id) => {
-    window.open(`http://127.0.0.1:8000/invoice/${id}/pdf`, "_blank");
+    window.open(`${API_URL}/invoice/${id}/pdf`, "_blank");
   };
 
   return (
     <div>
-
       <h2>Database</h2>
 
       <button onClick={loadInvoices}>
         Load invoices
       </button>
 
-      <div style={{marginTop:"20px"}}>
-
+      <div style={{ marginTop: "20px" }}>
         {invoices.map((invoice) => (
-          <div key={invoice.id} style={{
-            border:"1px solid gray",
-            padding:"10px",
-            marginBottom:"10px"
-          }}>
+          <div
+            key={invoice.id}
+            style={{
+              border: "1px solid gray",
+              padding: "10px",
+              marginBottom: "10px",
+            }}
+          >
             <button onClick={() => deleteInvoices(invoice.id)}>
               Delete
             </button>
@@ -77,21 +72,15 @@ function DatabaseTab() {
             <p><b>Lines:</b></p>
 
             {invoice.lines.map((line, i) => (
-              <div key={i} style={{marginLeft:"20px"}}>
-
+              <div key={i} style={{ marginLeft: "20px" }}>
                 {line.description} | Qty: {line.qty} | Price: {line.price}
-
               </div>
             ))}
-
           </div>
         ))}
-
       </div>
-
     </div>
   );
-
 }
 
 export default DatabaseTab;

@@ -1,233 +1,231 @@
 import { useEffect, useState } from "react";
-  const cardStyle = {
-    width: "260px",
-    background: "#ffffff",
-    border: "1px solid #e5e7eb",
-    borderRadius: "14px",
-    padding: "16px",
-    boxShadow: "0 4px 12px rgba(0,0,0,0.3)",
-  };
+
+const API_URL = import.meta.env.VITE_API_URL;
+
+const cardStyle = {
+  width: "260px",
+  background: "#ffffff",
+  border: "1px solid #e5e7eb",
+  borderRadius: "14px",
+  padding: "16px",
+  boxShadow: "0 4px 12px rgba(0,0,0,0.3)",
+};
+
 function SettingsTab() {
-
   const [openModal, setOpenModal] = useState(null);
+
   const overlayStyle = {
-  position: "fixed",
-  top: 0,
-  left: 0,
-  width: "100vw",
-  height: "100vh",
-  background: "rgba(0,0,0,0.4)",
-  display: "flex",
-  alignItems: "center",
-  justifyContent: "center",
-  zIndex: 1000,
-};
+    position: "fixed",
+    top: 0,
+    left: 0,
+    width: "100vw",
+    height: "100vh",
+    background: "rgba(0,0,0,0.4)",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    zIndex: 1000,
+  };
 
-const modalStyle = {
-  background: "white",
-  padding: "30px",
-  borderRadius: "16px",
-  width: "1000px",
-  maxWidth: "90%",
-  maxHeight: "90vh",
-  overflowY: "auto",
-  boxShadow: "0 20px 60px rgba(0,0,0,0.2)",
-};
-const [companyData, setCompanyData] = useState({
-  name: "MyAmazingCompany OU",
-  regNr: "11244334",
-  street: `Amazing tn 11-22`,
-  city: `Examplista`,
-  postalcode: `12345`,
-  country: `Contrista`,
-  phonenr: `51234567`,
-  email: `myamazing@example.com`,
-  bankName: `AS EXMP Bank`,
-  bankAccountNr: `EE123456789012345678`,
-});
-const [invoiceSettingsData, setInvoiceSettingsData] = useState({
-  invoiceNr: `0100`,
-  paymentTerm: `20`,
-});
-const saveInvoiceSettingsData = async () => {
-  try {
-    const response = await fetch("http://127.0.0.1:8000/invoicesettings", {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(invoiceSettingsData),
-    });
+  const modalStyle = {
+    background: "white",
+    padding: "30px",
+    borderRadius: "16px",
+    width: "1000px",
+    maxWidth: "90%",
+    maxHeight: "90vh",
+    overflowY: "auto",
+    boxShadow: "0 20px 60px rgba(0,0,0,0.2)",
+  };
 
-    if (!response.ok) {
-      throw new Error(`HTTP error ${response.status}`);
+  const [companyData, setCompanyData] = useState({
+    name: "MyAmazingCompany OU",
+    regNr: "11244334",
+    street: "Amazing tn 11-22",
+    city: "Examplista",
+    postalcode: "12345",
+    country: "Contrista",
+    phonenr: "51234567",
+    email: "myamazing@example.com",
+    bankName: "AS EXMP Bank",
+    bankAccountNr: "EE123456789012345678",
+  });
+
+  const [invoiceSettingsData, setInvoiceSettingsData] = useState({
+    invoiceNr: "0100",
+    paymentTerm: "20",
+  });
+
+  const saveInvoiceSettingsData = async () => {
+    try {
+      const response = await fetch(`${API_URL}/invoicesettings`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(invoiceSettingsData),
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error ${response.status}`);
+      }
+
+      const data = await response.json();
+      console.log(data);
+      alert("Invoice settings saved");
+    } catch (error) {
+      console.error(error);
+      alert("Failed to save invoice settings");
     }
+  };
 
-    const data = await response.json();
-    console.log(data);
-    alert("Invoice settings saved");
-  } catch (error) {
-    console.error(error);
-    alert("Failed to save invoice settings");
-  }
-};
-const loadInvoiceSettingsData = async () => {
-  try {
-    const response = await fetch("http://127.0.0.1:8000/invoicesettings");
-    const data = await response.json();
+  const loadInvoiceSettingsData = async () => {
+    try {
+      const response = await fetch(`${API_URL}/invoicesettings`);
+      const data = await response.json();
 
-    console.log(data);
-    setInvoiceSettingsData(data);
-  } catch (error) {
-    console.error(error);
-    alert("Failed to load invoice settings");
-  }
-};
-const loadCompanySettings = async () => {
-  try {
-    const response = await fetch("http://127.0.0.1:8000/companysettings");
-    const data = await response.json();
-
-    console.log(data);
-    setCompanyData(data);
-  } catch (error) {
-    console.error(error);
-    alert("Failed to load company settings");
-  }
-};
-const saveCompanySettings = async () => {
-  try {
-    const response = await fetch("http://127.0.0.1:8000/companysettings", {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify(companyData)
-    });
-
-    if (!response.ok) {
-      throw new Error(`HTTP error ${response.status}`);
+      console.log(data);
+      setInvoiceSettingsData(data);
+    } catch (error) {
+      console.error(error);
+      alert("Failed to load invoice settings");
     }
+  };
 
-    const data = await response.json();
-    console.log(data);
-    alert("Company settings saved");
-  } catch (error) {
-    console.error(error);
-    alert("Failed to save company settings");
-  }
+  const loadCompanySettings = async () => {
+    try {
+      const response = await fetch(`${API_URL}/companysettings`);
+      const data = await response.json();
 
-};
+      console.log(data);
+      setCompanyData(data);
+    } catch (error) {
+      console.error(error);
+      alert("Failed to load company settings");
+    }
+  };
+
+  const saveCompanySettings = async () => {
+    try {
+      const response = await fetch(`${API_URL}/companysettings`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(companyData),
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error ${response.status}`);
+      }
+
+      const data = await response.json();
+      console.log(data);
+      alert("Company settings saved");
+    } catch (error) {
+      console.error(error);
+      alert("Failed to save company settings");
+    }
+  };
+
   useEffect(() => {
-  loadCompanySettings();
-  loadInvoiceSettingsData();
-}, []);
+    loadCompanySettings();
+    loadInvoiceSettingsData();
+  }, []);
+
   return (
-  <div style={{ display: "flex", gap: "40px" , flexWrap: `wrap`}}>
-    <div style={cardStyle}>
-      <h3>My company</h3>
-      <p>Edit my company info</p>
-      <button
-            style={{
+    <div style={{ display: "flex", gap: "40px", flexWrap: "wrap" }}>
+      <div style={cardStyle}>
+        <h3>My company</h3>
+        <p>Edit my company info</p>
+        <button
+          style={{
             padding: "12px 24px",
             fontSize: "16px",
             fontWeight: "600",
             fontFamily: "system-ui, sans-serif",
-
             backgroundColor: "#6a99ff",
             color: "white",
-
-            
             borderRadius: "10px",
             cursor: "pointer",
+            marginLeft: "170px",
+            marginTop: "20px",
+          }}
+          onClick={() => setOpenModal("company")}
+        >
+          EDIT
+        </button>
+      </div>
 
-            marginLeft: `170px`,
-            marginTop: `20px`
-            }}
-            onClick={() => setOpenModal("company")}>
-        EDIT
-      </button>
-    </div>
-
-        <div style={cardStyle}>
-      <h3>Clients</h3>
-      <p>Edit clients info</p>
-      <button
-            style={{
+      <div style={cardStyle}>
+        <h3>Clients</h3>
+        <p>Edit clients info</p>
+        <button
+          style={{
             padding: "12px 24px",
             fontSize: "16px",
             fontWeight: "600",
             fontFamily: "system-ui, sans-serif",
-
             backgroundColor: "#6a99ff",
             color: "white",
-
-            
             borderRadius: "10px",
             cursor: "pointer",
+            marginLeft: "170px",
+            marginTop: "20px",
+          }}
+          onClick={() => setOpenModal("clients")}
+        >
+          EDIT
+        </button>
+      </div>
 
-            marginLeft: `170px`,
-            marginTop: `20px`
-            }}
-            onClick={() => setOpenModal("clients")}>            
-        EDIT
-      </button>
-    </div>
-    <div style={cardStyle}>
-      <h3>Services</h3>
-      <p>Edit services info</p>
-      <button
-            style={{
+      <div style={cardStyle}>
+        <h3>Services</h3>
+        <p>Edit services info</p>
+        <button
+          style={{
             padding: "12px 24px",
             fontSize: "16px",
             fontWeight: "600",
             fontFamily: "system-ui, sans-serif",
-
             backgroundColor: "#6a99ff",
             color: "white",
-
-            
             borderRadius: "10px",
             cursor: "pointer",
+            marginLeft: "170px",
+            marginTop: "20px",
+          }}
+          onClick={() => setOpenModal("services")}
+        >
+          EDIT
+        </button>
+      </div>
 
-            marginLeft: `170px`,
-            marginTop: `20px`
-            }}
-            onClick={() => setOpenModal("services")}>
-        EDIT
-      </button>
-    </div>
-        <div style={cardStyle}>
-      <h3>Arve seaded</h3>
-      <p>Arve nr, Makse ting, ...</p>
-      <button
-            style={{
+      <div style={cardStyle}>
+        <h3>Arve seaded</h3>
+        <p>Arve nr, Makse ting, ...</p>
+        <button
+          style={{
             padding: "12px 24px",
             fontSize: "16px",
             fontWeight: "600",
             fontFamily: "system-ui, sans-serif",
-
             backgroundColor: "#6a99ff",
             color: "white",
-
-            
             borderRadius: "10px",
             cursor: "pointer",
+            marginLeft: "170px",
+            marginTop: "20px",
+          }}
+          onClick={() => setOpenModal("invoiceSettings")}
+        >
+          EDIT
+        </button>
+      </div>
 
-            marginLeft: `170px`,
-            marginTop: `20px`
-            }}
-            onClick={() => setOpenModal("invoiceSettings")}>
-        EDIT
-      </button>
-    </div>
-    {openModal && (
+      {openModal && (
         <div style={overlayStyle} onClick={() => setOpenModal(null)}>
-          <div
-            style={modalStyle}
-            onClick={(e) => e.stopPropagation()}
-          >
-
+          <div style={modalStyle} onClick={(e) => e.stopPropagation()}>
             {openModal === "company" && (
               <CompanyTab
                 companyData={companyData}
@@ -247,22 +245,12 @@ const saveCompanySettings = async () => {
           </div>
         </div>
       )}
-  </div>
+    </div>
   );
 }
+
 function CompanyTab({ companyData, setCompanyData, saveCompanySettings }) {
   return (
-
-    //    name: "MyAmazingCompany OU",
-    //    regNr: "11244334",
-    //    street: `Amazing tn 11-22`,
-    //    city: `Examplista`,
-    //    postalcode: `12345`,
-    //    country: `Contrista`,
-    //    phonenr: `51234567`,
-    //   email: `myamazing@example.com`,
-    //    bankName: `AS EXMP Bank`,
-    //    bankAccountNr: `EE123456789012345678`,
     <div>
       <p>Company name</p>
       <input
@@ -306,7 +294,7 @@ function CompanyTab({ companyData, setCompanyData, saveCompanySettings }) {
             postalcode: e.target.value,
           })
         }
-      />      
+      />
 
       <p>City</p>
       <input
@@ -318,7 +306,7 @@ function CompanyTab({ companyData, setCompanyData, saveCompanySettings }) {
           })
         }
       />
-      
+
       <p>Country</p>
       <input
         value={companyData.country}
@@ -339,7 +327,8 @@ function CompanyTab({ companyData, setCompanyData, saveCompanySettings }) {
             phonenr: e.target.value,
           })
         }
-      />      
+      />
+
       <p>E-Mail</p>
       <input
         value={companyData.email}
@@ -349,7 +338,8 @@ function CompanyTab({ companyData, setCompanyData, saveCompanySettings }) {
             email: e.target.value,
           })
         }
-      />      
+      />
+
       <p>Bank Name</p>
       <input
         value={companyData.bankName}
@@ -359,7 +349,8 @@ function CompanyTab({ companyData, setCompanyData, saveCompanySettings }) {
             bankName: e.target.value,
           })
         }
-      />      
+      />
+
       <p>Bank Account Nr</p>
       <input
         value={companyData.bankAccountNr}
@@ -369,15 +360,14 @@ function CompanyTab({ companyData, setCompanyData, saveCompanySettings }) {
             bankAccountNr: e.target.value,
           })
         }
-      />  
+      />
+
       <div style={{ marginTop: "20px" }}>
         <button onClick={saveCompanySettings}>
           Save Company Settings
         </button>
       </div>
     </div>
-
-    
   );
 }
 
@@ -409,28 +399,28 @@ function ClientsTab() {
     boxShadow: "0 20px 60px rgba(0,0,0,0.2)",
   };
 
-const loadClients = async () => {
-  try {
-    const response = await fetch("http://127.0.0.1:8000/clients");
+  const loadClients = async () => {
+    try {
+      const response = await fetch(`${API_URL}/clients`);
 
-    console.log("clients response status:", response.status);
+      console.log("clients response status:", response.status);
 
-    const text = await response.text();
-    console.log("clients raw response:", text);
+      const text = await response.text();
+      console.log("clients raw response:", text);
 
-    if (!response.ok) {
-      throw new Error(`HTTP error ${response.status}: ${text}`);
+      if (!response.ok) {
+        throw new Error(`HTTP error ${response.status}: ${text}`);
+      }
+
+      const data = JSON.parse(text);
+      console.log("clients parsed data:", data);
+
+      setClients(data);
+    } catch (error) {
+      console.error("loadClients failed:", error);
+      alert(`Failed to load clients: ${error.message}`);
     }
-
-    const data = JSON.parse(text);
-    console.log("clients parsed data:", data);
-
-    setClients(data);
-  } catch (error) {
-    console.error("loadClients failed:", error);
-    alert(`Failed to load clients: ${error.message}`);
-  }
-};
+  };
 
   const addClient = async () => {
     const newClient = {
@@ -447,7 +437,7 @@ const loadClients = async () => {
     };
 
     try {
-      const response = await fetch("http://127.0.0.1:8000/clients", {
+      const response = await fetch(`${API_URL}/clients`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -468,16 +458,13 @@ const loadClients = async () => {
 
   const saveEditedClient = async () => {
     try {
-      const response = await fetch(
-        `http://127.0.0.1:8000/clients/${editingClient.id}`,
-        {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(editingClient),
-        }
-      );
+      const response = await fetch(`${API_URL}/clients/${editingClient.id}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(editingClient),
+      });
 
       if (!response.ok) {
         throw new Error(`HTTP error ${response.status}`);
@@ -493,7 +480,7 @@ const loadClients = async () => {
 
   const deleteClient = async (id) => {
     try {
-      const response = await fetch(`http://127.0.0.1:8000/clients/${id}`, {
+      const response = await fetch(`${API_URL}/clients/${id}`, {
         method: "DELETE",
       });
 
@@ -681,10 +668,14 @@ const loadClients = async () => {
   );
 }
 
-function InvoiceSettingsTab({ invoiceSettingsData, setInvoiceSettingsData, saveInvoiceSettingsData}){
-  return(
+function InvoiceSettingsTab({
+  invoiceSettingsData,
+  setInvoiceSettingsData,
+  saveInvoiceSettingsData,
+}) {
+  return (
     <div>
-            <p>Järgmise arve number</p>
+      <p>Järgmise arve number</p>
       <input
         value={invoiceSettingsData.invoiceNr}
         onChange={(e) =>
@@ -698,6 +689,7 @@ function InvoiceSettingsTab({ invoiceSettingsData, setInvoiceSettingsData, saveI
     </div>
   );
 }
+
 function ServicesTab() {
   const [services, setServices] = useState([]);
   const [newService, setNewService] = useState({
@@ -707,13 +699,13 @@ function ServicesTab() {
   });
 
   const loadServices = async () => {
-    const response = await fetch("http://127.0.0.1:8000/services");
+    const response = await fetch(`${API_URL}/services`);
     const data = await response.json();
     setServices(data);
   };
 
   const addService = async () => {
-    const response = await fetch("http://127.0.0.1:8000/services", {
+    const response = await fetch(`${API_URL}/services`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -738,9 +730,10 @@ function ServicesTab() {
   useEffect(() => {
     loadServices();
   }, []);
+
   const deleteService = async (id) => {
     try {
-      const response = await fetch(`http://127.0.0.1:8000/services/${id}`, {
+      const response = await fetch(`${API_URL}/services/${id}`, {
         method: "DELETE",
       });
 
@@ -754,6 +747,7 @@ function ServicesTab() {
       alert("Failed to delete service");
     }
   };
+
   return (
     <div>
       <h2>Services</h2>
@@ -814,4 +808,5 @@ function ServicesTab() {
     </div>
   );
 }
+
 export default SettingsTab;

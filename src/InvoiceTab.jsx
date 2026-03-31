@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
 
+const API_URL = import.meta.env.VITE_API_URL;
+
 function InvoiceTab() {
   const today = new Date();
   const formattedDate = today.toLocaleDateString("et-EE");
@@ -10,31 +12,31 @@ function InvoiceTab() {
   const [invoiceNr, setInvoiceNr] = useState("");
   const [invoiceDate, setInvoiceDate] = useState(formattedDate);
   const [paymentTerm, setPaymentTerm] = useState(20);
-  const [lines, setLines] = useState([
-    { description: "", qty: 1, price: 0 }
-  ]);
+  const [lines, setLines] = useState([{ description: "", qty: 1, price: 0 }]);
   const [comment, setComment] = useState("");
+
   useEffect(() => {
     loadCompanies();
     loadInvoiceSettings();
     loadServices();
   }, []);
+
   const loadInvoiceSettings = async () => {
     try {
-      const response = await fetch("http://127.0.0.1:8000/invoicesettings");
+      const response = await fetch(`${API_URL}/invoicesettings`);
       const data = await response.json();
 
       console.log("invoice settings:", data);
-
       setInvoiceNr(data.invoiceNr || "puudub");
     } catch (error) {
       console.error(error);
       setInvoiceNr("puudub");
     }
   };
+
   const loadCompanies = async () => {
     try {
-      const response = await fetch("http://127.0.0.1:8000/clients");
+      const response = await fetch(`${API_URL}/clients`);
 
       if (!response.ok) {
         throw new Error(`HTTP error ${response.status}`);
@@ -51,9 +53,10 @@ function InvoiceTab() {
       alert("Failed to load companies");
     }
   };
+
   const loadServices = async () => {
     try {
-      const response = await fetch("http://127.0.0.1:8000/services");
+      const response = await fetch(`${API_URL}/services`);
 
       if (!response.ok) {
         throw new Error(`HTTP error ${response.status}`);
@@ -66,6 +69,7 @@ function InvoiceTab() {
       alert("Failed to load services");
     }
   };
+
   const saveInvoice = async () => {
     try {
       const invoiceData = {
@@ -78,18 +82,18 @@ function InvoiceTab() {
         receiverEmail: company.email,
         receiverPhonenr: company.phonenr,
         invoiceNr,
-        comment,        
+        comment,
         invoiceDate,
         paymentTerm,
         lines,
       };
 
-      const response = await fetch("http://127.0.0.1:8000/invoice", {
+      const response = await fetch(`${API_URL}/invoice`, {
         method: "POST",
         headers: {
-          "Content-Type": "application/json"
+          "Content-Type": "application/json",
         },
-        body: JSON.stringify(invoiceData)
+        body: JSON.stringify(invoiceData),
       });
 
       if (!response.ok) {
@@ -111,7 +115,9 @@ function InvoiceTab() {
       street: "",
       city: "",
       postalcode: "",
-      country: ""
+      country: "",
+      email: "",
+      phonenr: "",
     };
 
   function updateLine(index, field, value) {
@@ -124,96 +130,104 @@ function InvoiceTab() {
     setLines([...lines, { description: "", qty: 1, price: 0 }]);
   }
 
-  const grandTotal = lines.reduce((sum, line) => sum + line.qty * line.price, 0);
-
-const handleSaveInvoice = async () => {
-  try {
-    console.log("1. Starting save");
-
-    const currentNr = invoiceNr || "0";
-    console.log("2. currentNr:", currentNr);
-
-    const parsedNr = parseInt(currentNr, 10);
-
-    if (isNaN(parsedNr)) {
-      throw new Error(`Invoice number is not numeric: ${currentNr}`);
-    }
-
-    await saveInvoice();
-    console.log("3. Invoice itself saved");
-
-    const nextNr = String(parsedNr + 1).padStart(currentNr.length, "0");
-    console.log("4. nextNr:", nextNr);
-
-    const updatedInvoiceSettings = {
-      invoiceNr: nextNr,
-      paymentTerm: String(paymentTerm),
-    };
-    console.log("5. updatedInvoiceSettings:", updatedInvoiceSettings);
-
-    const response = await fetch("http://127.0.0.1:8000/invoicesettings", {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(updatedInvoiceSettings),
-    });
-
-    console.log("6. PUT response status:", response.status);
-
-    const responseText = await response.text();
-    console.log("7. PUT response text:", responseText);
-
-    if (!response.ok) {
-      throw new Error(`HTTP error ${response.status}: ${responseText}`);
-    }
-
-    setInvoiceNr(nextNr);
-
-    alert("Arve salvestatud");
-  } catch (error) {
-    console.error("handleSaveInvoice failed:", error);
-    alert("Arve või arve numbri salvestamine ebaõnnestus: " + error.message);
-  }
-};
-function getMatchingServices(searchText) {
-  if (!searchText.trim()) return [];
-
-  return services.filter((service) =>
-    service.name.toLowerCase().includes(searchText.toLowerCase()) ||
-    service.description.toLowerCase().includes(searchText.toLowerCase())
+  const grandTotal = lines.reduce(
+    (sum, line) => sum + line.qty * line.price,
+    0
   );
-}
-function selectServiceForLine(index, service) {
-  const newLines = [...lines];
-  newLines[index].description = service.description;
-  newLines[index].price = service.price;
 
-  if (!newLines[index].qty || newLines[index].qty <= 0) {
-    newLines[index].qty = 1;
+  const handleSaveInvoice = async () => {
+    try {
+      console.log("1. Starting save");
+
+      const currentNr = invoiceNr || "0";
+      console.log("2. currentNr:", currentNr);
+
+      const parsedNr = parseInt(currentNr, 10);
+
+      if (isNaN(parsedNr)) {
+        throw new Error(`Invoice number is not numeric: ${currentNr}`);
+      }
+
+      await saveInvoice();
+      console.log("3. Invoice itself saved");
+
+      const nextNr = String(parsedNr + 1).padStart(currentNr.length, "0");
+      console.log("4. nextNr:", nextNr);
+
+      const updatedInvoiceSettings = {
+        invoiceNr: nextNr,
+        paymentTerm: String(paymentTerm),
+      };
+      console.log("5. updatedInvoiceSettings:", updatedInvoiceSettings);
+
+      const response = await fetch(`${API_URL}/invoicesettings`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(updatedInvoiceSettings),
+      });
+
+      console.log("6. PUT response status:", response.status);
+
+      const responseText = await response.text();
+      console.log("7. PUT response text:", responseText);
+
+      if (!response.ok) {
+        throw new Error(`HTTP error ${response.status}: ${responseText}`);
+      }
+
+      setInvoiceNr(nextNr);
+
+      alert("Arve salvestatud");
+    } catch (error) {
+      console.error("handleSaveInvoice failed:", error);
+      alert("Arve või arve numbri salvestamine ebaõnnestus: " + error.message);
+    }
+  };
+
+  function getMatchingServices(searchText) {
+    if (!searchText.trim()) return [];
+
+    return services.filter(
+      (service) =>
+        service.name.toLowerCase().includes(searchText.toLowerCase()) ||
+        service.description.toLowerCase().includes(searchText.toLowerCase())
+    );
   }
 
-  setLines(newLines);
-  setActiveSuggestionIndex(null);
-}
-useEffect(() => {
-  const handleDocumentClick = () => {
+  function selectServiceForLine(index, service) {
+    const newLines = [...lines];
+    newLines[index].description = service.description;
+    newLines[index].price = service.price;
+
+    if (!newLines[index].qty || newLines[index].qty <= 0) {
+      newLines[index].qty = 1;
+    }
+
+    setLines(newLines);
     setActiveSuggestionIndex(null);
-  };
+  }
 
-  document.addEventListener("click", handleDocumentClick);
+  useEffect(() => {
+    const handleDocumentClick = () => {
+      setActiveSuggestionIndex(null);
+    };
 
-  return () => {
-    document.removeEventListener("click", handleDocumentClick);
-  };
-}, []);
+    document.addEventListener("click", handleDocumentClick);
+
+    return () => {
+      document.removeEventListener("click", handleDocumentClick);
+    };
+  }, []);
+
   return (
     <div>
       <div
         style={{
           display: "flex",
           gap: "60px",
-          alignItems: "flex-start"
+          alignItems: "flex-start",
         }}
       >
         <div>
@@ -272,7 +286,7 @@ useEffect(() => {
           onInput={(e) => {
             e.target.style.height = "auto";
             e.target.style.height = e.target.scrollHeight + "px";
-            setComment(e.target.value)
+            setComment(e.target.value);
           }}
         />
         <table style={{ width: "600px", borderCollapse: "collapse" }}>
@@ -343,6 +357,7 @@ useEffect(() => {
                       </div>
                     )}
                 </td>
+
                 <td style={{ paddingBottom: "8px" }}>
                   <input
                     type="number"
