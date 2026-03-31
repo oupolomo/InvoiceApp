@@ -68,16 +68,19 @@ def init_db():
         """)
     cursor.execute("""
         CREATE TABLE IF NOT EXISTS invoice_settings (
+            id INTEGER PRIMARY KEY,
+            invoice_nr TEXT NOT NULL,
+            payment_term TEXT NOT NULL
+        )
+    """)
+
+    cursor.execute("""
+        CREATE TABLE IF NOT EXISTS services (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             name TEXT NOT NULL,
             description TEXT NOT NULL,
             price REAL NOT NULL
         )
-        """)
-    cursor.execute("""
-        CREATE TABLE IF NOT EXISTS services (
-            id INTEGER
-        )
-        """)
+    """)
     conn.commit()
     conn.close()
