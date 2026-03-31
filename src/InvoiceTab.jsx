@@ -22,7 +22,7 @@ function InvoiceTab() {
 
   const loadInvoiceSettings = async () => {
     try {
-      const response = await apiFetch(`${API_URL}/invoicesettings`);
+      const response = await apiFetch(`/invoicesettings`);
       const data = await response.json();
 
       console.log("invoice settings:", data);
@@ -35,7 +35,7 @@ function InvoiceTab() {
 
   const loadCompanies = async () => {
     try {
-      const response = await apiFetch(`${API_URL}/clients`);
+      const response = await apiFetch(`/clients`);
 
       if (!response.ok) {
         throw new Error(`HTTP error ${response.status}`);
@@ -55,7 +55,7 @@ function InvoiceTab() {
 
   const loadServices = async () => {
     try {
-      const response = await apiFetch(`${API_URL}/services`);
+      const response = await apiFetch(`/services`);
 
       if (!response.ok) {
         throw new Error(`HTTP error ${response.status}`);
@@ -87,7 +87,7 @@ function InvoiceTab() {
         lines,
       };
 
-      const response = await apiFetch(`${API_URL}/invoice`, {
+      const response = await apiFetch(`/invoice`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -159,7 +159,7 @@ function InvoiceTab() {
       };
       console.log("5. updatedInvoiceSettings:", updatedInvoiceSettings);
 
-      const response = await apiFetch(`${API_URL}/invoicesettings`, {
+      const response = await apiFetch(`/invoicesettings`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",

@@ -6,7 +6,7 @@ function DatabaseTab() {
 
   const loadInvoices = async () => {
     try {
-      const response = await apiFetch(`${API_URL}/invoices`);
+      const response = await apiFetch(`/invoices`);
       const data = await response.json();
 
       console.log(data);
@@ -19,7 +19,7 @@ function DatabaseTab() {
 
   const deleteInvoices = async (id) => {
     try {
-      const response = await apiFetch(`${API_URL}/invoice/${id}`, {
+      const response = await apiFetch(`/invoice/${id}`, {
         method: "DELETE",
       });
 
