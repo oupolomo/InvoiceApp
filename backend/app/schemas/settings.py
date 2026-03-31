@@ -1,0 +1,31 @@
+from pydantic import BaseModel
+
+class CompanySettings(BaseModel):
+    name: str
+    regNr: str
+    street: str
+    city: str
+    postalcode: str
+    country: str
+    phonenr: str
+    email: str
+    bankName: str
+    bankAccountNr: str
+class Client(BaseModel):
+    name: str
+    regNr: str
+    street: str
+    city: str
+    postalcode: str
+    country: str
+    phonenr: str
+    email: str
+    bankName: str
+    bankAccountNr: str
+class InvoiceSettings(BaseModel):
+    invoiceNr: str
+    paymentTerm: str
+class Service(BaseModel):
+    name: str
+    description: str
+    price: float
