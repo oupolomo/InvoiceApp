@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { apiFetch } from "./api";
 
+
 function DatabaseTab() {
   const [invoices, setInvoices] = useState([]);
 
@@ -35,19 +36,15 @@ function DatabaseTab() {
 
 const openInvoicePdf = async (id) => {
   try {
-    const response = await apiFetch(`/invoice/${id}/pdf`, {
-      headers: getAuthHeaders(),
-    });
+    const response = await apiFetch(`/invoice/${id}/pdf`);
 
     if (!response.ok) {
       throw new Error("Failed to fetch PDF");
     }
 
     const blob = await response.blob();
-
     const url = window.URL.createObjectURL(blob);
-    window.open(url);
-
+    window.open(url, "_blank");
   } catch (error) {
     console.error(error);
     alert("Failed to open PDF");
