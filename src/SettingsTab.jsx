@@ -57,7 +57,7 @@ function SettingsTab() {
 
   const saveInvoiceSettingsData = async () => {
     try {
-      const response = await apiapiFetch(`/invoicesettings`, {
+      const response = await apiFetch(`/invoicesettings`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
