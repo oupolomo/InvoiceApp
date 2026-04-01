@@ -33,9 +33,27 @@ function DatabaseTab() {
     }
   };
 
-  const openInvoicePdf = (id) => {
-    window.open(`${API_URL}/invoice/${id}/pdf`, "_blank");
-  };
+const openInvoicePdf = async (id) => {
+  try {
+    const response = await fetch(`${API_URL}/invoice/${id}/pdf`, {
+      headers: getAuthHeaders(),
+    });
+
+    if (!response.ok) {
+      throw new Error("Failed to fetch PDF");
+    }
+
+    const blob = await response.blob();
+
+    const url = window.URL.createObjectURL(blob);
+    window.open(url);
+
+  } catch (error) {
+    console.error(error);
+    alert("Failed to open PDF");
+  }
+};
+
 
   return (
     <div>
