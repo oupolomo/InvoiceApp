@@ -35,7 +35,7 @@ function DatabaseTab() {
 
 const openInvoicePdf = async (id) => {
   try {
-    const response = await fetch(`${API_URL}/invoice/${id}/pdf`, {
+    const response = await apiFetch(`/invoice/${id}/pdf`, {
       headers: getAuthHeaders(),
     });
 
