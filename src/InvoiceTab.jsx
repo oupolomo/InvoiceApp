@@ -328,7 +328,7 @@ function InvoiceTab() {
                 borderRadius: "999px",
               }}
             >
-              Client details
+
             </div>
           </div>
 
@@ -420,7 +420,7 @@ function InvoiceTab() {
                 borderRadius: "999px",
               }}
             >
-              Invoice settings
+
             </div>
           </div>
 
