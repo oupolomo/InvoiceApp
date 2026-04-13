@@ -45,7 +45,7 @@ function SettingsTab() {
     postalcode: "12345",
     country: "Contrista",
     phonenr: "51234567",
-    email: "myamazing@example.com",
+    email: "myamazing@example.coom",
     bankName: "AS EXMP Bank",
     bankAccountNr: "EE123456789012345678",
   });
