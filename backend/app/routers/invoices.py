@@ -233,19 +233,16 @@ def open_pdf_invoice(invoice_id: int):
 
     comment = str(row["comment"])
 
-    parts = [
-        p.strip()
-        for p in comment.split("■")
-        if p.strip()
-    ]
-
     c.setFont("Helvetica", 12)
 
     text = c.beginText(50, y)
     text.setLeading(18)
 
-    for part in parts:
-        text.textLine(f"• {part}")
+    for line in comment.splitlines():
+        cleaned = line.strip()
+
+        if cleaned:
+            text.textLine(f"• {cleaned}")
 
     c.drawText(text)
 
