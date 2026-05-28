@@ -227,11 +227,20 @@ def open_pdf_invoice(invoice_id: int):
     c.setFont("Helvetica-Bold", 12)
     c.drawString(360, y, "Summa kokku:")
     c.drawString(470, y, f"{grand_total:.2f} EUR")
-
-    #comment section
+    
+    # comment section
     y -= 40
     c.setFont("Helvetica", 12)
-    c.drawString(50, y, f"{row['comment']}")
+
+    comment_lines = str(row["comment"]).split("■")
+
+    for line in comment_lines:
+        cleaned = line.strip()
+
+        if cleaned:
+            c.drawString(50, y, cleaned)
+            y -= 18
+
 
     # Content placed relative to current y, not page top
     y -= 40
