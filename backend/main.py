@@ -6,7 +6,7 @@ from app.db.database import init_db
 from fastapi import Depends
 from app.auth import require_password
 
-app = FastAPI(dependencies=[Depends(require_password)])
+app = FastAPI()
 
 origins = [
     "http://localhost:5173",
@@ -16,7 +16,7 @@ origins = [
 app.add_middleware(
     CORSMiddleware,
     allow_origins=origins,
-    allow_credentials=False,
+    allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
