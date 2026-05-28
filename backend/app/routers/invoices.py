@@ -230,16 +230,26 @@ def open_pdf_invoice(invoice_id: int):
     
     # comment section
     y -= 40
+
+    comment = str(row["comment"])
+
+    parts = [
+        p.strip()
+        for p in comment.split("■")
+        if p.strip()
+    ]
+
     c.setFont("Helvetica", 12)
 
-    comment_lines = str(row["comment"]).split("■")
+    text = c.beginText(50, y)
+    text.setLeading(18)
 
-    for line in comment_lines:
-        cleaned = line.strip()
+    for part in parts:
+        text.textLine(f"• {part}")
 
-        if cleaned:
-            c.drawString(50, y, cleaned)
-            y -= 18
+    c.drawText(text)
+
+    y = text.getY()
 
 
     # Content placed relative to current y, not page top
