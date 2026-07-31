@@ -2,26 +2,30 @@ import { useState } from "react";
 import { apiFetch } from "./api";
 
 const ESTONIAN_MONTHS = [
-  "jaanuar",
-  "veebruar",
-  "märts",
-  "aprill",
-  "mai",
-  "juuni",
-  "juuli",
-  "august",
-  "september",
-  "oktoober",
-  "november",
-  "detsember",
+  "Jaanuar",
+  "Veebruar",
+  "Märts",
+  "Aprill",
+  "Mai",
+  "Juuni",
+  "Juuli",
+  "August",
+  "September",
+  "Oktoober",
+  "November",
+  "Detsember",
 ];
 
 const getInvoiceFilename = (invoice) => {
-  // invoiceDate is stored as YYYY-MM-DD. Splitting it avoids timezone shifts.
-  const [year, month] = String(invoice.invoiceDate || "").split("-");
-  const monthName = ESTONIAN_MONTHS[Number(month) - 1] || "kuupäevata";
+  const date = String(invoice.invoiceDate || "").trim();
+  const estonianDate = date.match(/^\d{1,2}\.(\d{1,2})\.(\d{4})$/);
+  const isoDate = date.match(/^(\d{4})-(\d{1,2})-\d{1,2}$/);
+  const month = Number(estonianDate?.[1] || isoDate?.[2]);
+  const year = estonianDate?.[2] || isoDate?.[1] || "aastata";
+  const monthName = ESTONIAN_MONTHS[month - 1] || "Kuupäevata";
+  const invoiceNr = String(invoice.invoiceNr || "").padStart(4, "0");
 
-  const filename = `${invoice.invoiceNr} ${invoice.receiver} ${monthName} ${year || "aastata"}`;
+  const filename = `${invoiceNr} ${invoice.receiver} ${monthName} ${year}`;
 
   // Remove characters Windows does not allow in filenames, while keeping spaces and Estonian letters.
   return `${filename.replace(/[<>:"/\\|?*\x00-\x1F]/g, "").replace(/\s+/g, " ").trim()}.pdf`;

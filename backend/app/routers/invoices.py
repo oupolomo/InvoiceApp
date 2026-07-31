@@ -10,24 +10,35 @@ from pathlib import Path
 router = APIRouter()
 
 ESTONIAN_MONTHS = (
-    "jaanuar", "veebruar", "märts", "aprill", "mai", "juuni",
-    "juuli", "august", "september", "oktoober", "november", "detsember"
+    "Jaanuar", "Veebruar", "Märts", "Aprill", "Mai", "Juuni",
+    "Juuli", "August", "September", "Oktoober", "November", "Detsember"
 )
 
 
 def invoice_download_filename(row):
-    date_parts = str(row["invoice_date"] or "").split("-")
-    year = date_parts[0] if date_parts and date_parts[0] else "aastata"
+    invoice_date = str(row["invoice_date"] or "").strip()
+    estonian_date = re.fullmatch(r"\d{1,2}\.(\d{1,2})\.(\d{4})", invoice_date)
+    iso_date = re.fullmatch(r"(\d{4})-(\d{1,2})-\d{1,2}", invoice_date)
 
     try:
-        month_number = int(date_parts[1])
+        if estonian_date:
+            month_number = int(estonian_date.group(1))
+            year = estonian_date.group(2)
+        elif iso_date:
+            month_number = int(iso_date.group(2))
+            year = iso_date.group(1)
+        else:
+            raise ValueError("Unknown date format")
+
         if not 1 <= month_number <= 12:
             raise ValueError("Month must be between 1 and 12")
         month_name = ESTONIAN_MONTHS[month_number - 1]
-    except (IndexError, TypeError, ValueError):
-        month_name = "kuupäevata"
+    except (TypeError, ValueError):
+        month_name = "Kuupäevata"
+        year = "aastata"
 
-    filename = f'{row["invoice_nr"]} {row["receiver"]} {month_name} {year}'
+    invoice_nr = str(row["invoice_nr"] or "").zfill(4)
+    filename = f'{invoice_nr} {row["receiver"]} {month_name} {year}'
     filename = re.sub(r'[<>:"/\\|?*\x00-\x1f]', "", filename)
     filename = re.sub(r"\s+", " ", filename).strip()
     return f"{filename}.pdf"
