@@ -2,11 +2,35 @@ from fastapi import APIRouter
 from app.schemas.invoice import Invoice
 from app.db.database import get_connection
 import json
+import re
 from fastapi.responses import FileResponse
 from reportlab.pdfgen import canvas
 from pathlib import Path
 
 router = APIRouter()
+
+ESTONIAN_MONTHS = (
+    "jaanuar", "veebruar", "märts", "aprill", "mai", "juuni",
+    "juuli", "august", "september", "oktoober", "november", "detsember"
+)
+
+
+def invoice_download_filename(row):
+    date_parts = str(row["invoice_date"] or "").split("-")
+    year = date_parts[0] if date_parts and date_parts[0] else "aastata"
+
+    try:
+        month_number = int(date_parts[1])
+        if not 1 <= month_number <= 12:
+            raise ValueError("Month must be between 1 and 12")
+        month_name = ESTONIAN_MONTHS[month_number - 1]
+    except (IndexError, TypeError, ValueError):
+        month_name = "kuupäevata"
+
+    filename = f'{row["invoice_nr"]} {row["receiver"]} {month_name} {year}'
+    filename = re.sub(r'[<>:"/\\|?*\x00-\x1f]', "", filename)
+    filename = re.sub(r"\s+", " ", filename).strip()
+    return f"{filename}.pdf"
 #
 #    GET - retrieveing
 #    POST = Creating
@@ -284,5 +308,5 @@ def open_pdf_invoice(invoice_id: int):
     return FileResponse(
         path=str(pdf_path),
         media_type="application/pdf",
-        filename=f"invoice_{invoice_id}.pdf"
+        filename=invoice_download_filename(row)
     )

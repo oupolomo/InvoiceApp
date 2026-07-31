@@ -1,6 +1,32 @@
 import { useState } from "react";
 import { apiFetch } from "./api";
 
+const ESTONIAN_MONTHS = [
+  "jaanuar",
+  "veebruar",
+  "märts",
+  "aprill",
+  "mai",
+  "juuni",
+  "juuli",
+  "august",
+  "september",
+  "oktoober",
+  "november",
+  "detsember",
+];
+
+const getInvoiceFilename = (invoice) => {
+  // invoiceDate is stored as YYYY-MM-DD. Splitting it avoids timezone shifts.
+  const [year, month] = String(invoice.invoiceDate || "").split("-");
+  const monthName = ESTONIAN_MONTHS[Number(month) - 1] || "kuupäevata";
+
+  const filename = `${invoice.invoiceNr} ${invoice.receiver} ${monthName} ${year || "aastata"}`;
+
+  // Remove characters Windows does not allow in filenames, while keeping spaces and Estonian letters.
+  return `${filename.replace(/[<>:"/\\|?*\x00-\x1F]/g, "").replace(/\s+/g, " ").trim()}.pdf`;
+};
+
 
 function DatabaseTab() {
   const [invoices, setInvoices] = useState([]);
@@ -34,9 +60,9 @@ function DatabaseTab() {
     }
   };
 
-const openInvoicePdf = async (id) => {
+const downloadInvoicePdf = async (invoice) => {
   try {
-    const response = await apiFetch(`/invoice/${id}/pdf`);
+    const response = await apiFetch(`/invoice/${invoice.id}/pdf`);
 
     if (!response.ok) {
       throw new Error("Failed to fetch PDF");
@@ -44,7 +70,14 @@ const openInvoicePdf = async (id) => {
 
     const blob = await response.blob();
     const url = window.URL.createObjectURL(blob);
-    window.open(url, "_blank");
+    const link = document.createElement("a");
+
+    link.href = url;
+    link.download = getInvoiceFilename(invoice);
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    window.URL.revokeObjectURL(url);
   } catch (error) {
     console.error(error);
     alert("Failed to open PDF");
@@ -73,7 +106,7 @@ const openInvoicePdf = async (id) => {
             <button onClick={() => deleteInvoices(invoice.id)}>
               Delete
             </button>
-            <button onClick={() => openInvoicePdf(invoice.id)}>
+            <button onClick={() => downloadInvoicePdf(invoice)}>
               Save as PDF
             </button>
 
